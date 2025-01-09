@@ -11,7 +11,8 @@ app.use(express.urlencoded({ extended: true }));
 require('./initDB')();
 
 const banjirRoute = require('./Routes/banjirRoutes');
-app.use('/', banjirRoute);
+app.use('/', 'Halo dek');
+app.use('/geni/', banjirRoute);
 
 //404 handler and pass to error handler
 app.use((req, res, next) => {
