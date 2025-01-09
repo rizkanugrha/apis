@@ -10,8 +10,10 @@ app.use(express.urlencoded({ extended: true }));
 // Initialize DB
 require('./initDB')();
 
+const dek = 'halo dek welkam geni bencana banjir Kabupaten Batang';
 const banjirRoute = require('./Routes/banjirRoutes');
-app.use('/', 'Halo dek');
+app.use('/', dek);
+
 app.use('/geni/', banjirRoute);
 
 //404 handler and pass to error handler
