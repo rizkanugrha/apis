@@ -10,36 +10,34 @@ app.use(express.urlencoded({ extended: true }));
 // Initialize DB
 require('./initDB')();
 
+// Welcome message route
 const dek = 'halo dek welkam geni bencana banjir Kabupaten Batang';
+app.get('/', (req, res) => {
+  res.send(dek);
+});
+
+// Import and use banjirRoutes
 const banjirRoute = require('./Routes/banjirRoutes');
-app.use('/', dek);
+app.use('/geni', banjirRoute);
 
-app.use('/geni/', banjirRoute);
-
-//404 handler and pass to error handler
+// 404 handler - Pass to error handler
 app.use((req, res, next) => {
-  /*
-  const err = new Error('Not found');
-  err.status = 404;
-  next(err);
-  */
-  // You can use the above code if you're not using the http-errors module
   next(createError(404, 'Not found'));
 });
 
-//Error handler
+// Error handler
 app.use((err, req, res, next) => {
   res.status(err.status || 500);
   res.send({
     error: {
       status: err.status || 500,
-      message: err.message
-    }
+      message: err.message,
+    },
   });
 });
 
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log('Server started on port ' + PORT + '...');
+  console.log(`Server started on port ${PORT}...`);
 });
