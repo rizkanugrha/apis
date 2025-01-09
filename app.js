@@ -11,7 +11,7 @@ app.use(express.urlencoded({ extended: true }));
 require('./initDB')();
 
 const banjirRoute = require('./Routes/banjirRoutes');
-app.use('/api/banjir', banjirRoute);
+app.use('/', banjirRoute);
 
 //404 handler and pass to error handler
 app.use((req, res, next) => {
