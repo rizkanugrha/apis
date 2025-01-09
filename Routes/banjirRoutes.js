@@ -1,11 +1,11 @@
-import express from 'express';
-import {
+const express = require('express');
+const {
     getAllBanjir,
     createNewBanjir,
     findBanjirById,
     updateBanjir,
     deleteBanjir,
-} from '../Controllers/banjirControllers.js';
+} = require('../Controllers/banjirControllers');
 
 const router = express.Router();
 
@@ -15,4 +15,4 @@ router.get('/:id', findBanjirById);
 router.patch('/:id', updateBanjir);
 router.delete('/:id', deleteBanjir);
 
-export default router;
+module.exports = router;

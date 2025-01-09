@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 const banjirSchema = new mongoose.Schema(
   {
@@ -34,4 +34,6 @@ const banjirSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export const BanjirModels = mongoose.model('Banjir', banjirSchema);
+const BanjirModels = mongoose.model('Banjir', banjirSchema);
+
+module.exports = { BanjirModels };

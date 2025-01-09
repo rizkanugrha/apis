@@ -1,8 +1,8 @@
-import createError from 'http-errors';
-import mongoose from 'mongoose';
-import { BanjirModels } from '../models/banjirModels.js';
+const createError = require('http-errors');
+const mongoose = require('mongoose');
+const { BanjirModels } = require('../models/banjirModels');
 
-export const getAllBanjir = async (req, res, next) => {
+const getAllBanjir = async (req, res, next) => {
   try {
     const results = await BanjirModels.find({}, { __v: 0 });
     res.send(results);
@@ -12,7 +12,7 @@ export const getAllBanjir = async (req, res, next) => {
   }
 };
 
-export const createNewBanjir = async (req, res, next) => {
+const createNewBanjir = async (req, res, next) => {
   try {
     const banjir = new BanjirModels(req.body);
     const result = await banjir.save();
@@ -27,7 +27,7 @@ export const createNewBanjir = async (req, res, next) => {
   }
 };
 
-export const findBanjirById = async (req, res, next) => {
+const findBanjirById = async (req, res, next) => {
   const id = req.params.id;
   try {
     const banjir = await BanjirModels.findById(id);
@@ -45,7 +45,7 @@ export const findBanjirById = async (req, res, next) => {
   }
 };
 
-export const updateBanjir = async (req, res, next) => {
+const updateBanjir = async (req, res, next) => {
   try {
     const id = req.params.id;
     const updates = req.body;
@@ -66,7 +66,7 @@ export const updateBanjir = async (req, res, next) => {
   }
 };
 
-export const deleteBanjir = async (req, res, next) => {
+const deleteBanjir = async (req, res, next) => {
   const id = req.params.id;
   try {
     const result = await BanjirModels.findByIdAndDelete(id);
@@ -82,4 +82,12 @@ export const deleteBanjir = async (req, res, next) => {
     }
     next(error);
   }
+};
+
+module.exports = {
+  getAllBanjir,
+  createNewBanjir,
+  findBanjirById,
+  updateBanjir,
+  deleteBanjir,
 };

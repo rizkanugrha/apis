@@ -1,45 +1,34 @@
-import mongoose from 'mongoose';
-import dotenv from 'dotenv';
-dotenv.config();
+const mongoose = require('mongoose');
+const dotenv = require('dotenv').config();
+module.exports = () => {
+  mongoose
+    .connect(process.env.MONGO_URI, {
+      useUnifiedTopology: true,
+      useFindAndModify: false
+    })
+    .then(() => {
+      console.log('Mongodb connected....');
+    })
+    .catch(err => console.log(err.message));
 
-const mongoUri = process.env.MONGO_URI;
+  mongoose.connection.on('connected', () => {
+    console.log('Mongoose connected to db...');
+  });
 
-export const openDB = async () => {
-  try {
-    await mongoose.connect(mongoUri, {
-      serverSelectionTimeoutMS: 30000,
-      socketTimeoutMS: 30000,
-      maxPoolSize: 10,
+  mongoose.connection.on('error', err => {
+    console.log(err.message);
+  });
+
+  mongoose.connection.on('disconnected', () => {
+    console.log('Mongoose connection is disconnected...');
+  });
+
+  process.on('SIGINT', () => {
+    mongoose.connection.close(() => {
+      console.log(
+        'Mongoose connection is disconnected due to app termination...'
+      );
+      process.exit(0);
     });
-
-    console.log('Connected to MongoDB');
-
-    mongoose.connection.on('disconnected', () => {
-      console.log('MongoDB disconnected');
-    });
-
-    mongoose.connection.on('error', (err) => {
-      console.error('MongoDB error:', err);
-    });
-
-    setInterval(async () => {
-      try {
-        await mongoose.connection.db.admin().ping();
-        console.log('Database connection is active');
-      } catch (err) {
-        console.error('Error in database heartbeat:', err);
-      }
-    }, 60000);
-  } catch (err) {
-    console.error('Failed to connect to MongoDB', err);
-  }
-};
-
-export const closeDB = async () => {
-  try {
-    await mongoose.connection.close();
-    console.log('Database connection closed');
-  } catch (error) {
-    console.error('Error closing database connection:', error.message);
-  }
+  });
 };
