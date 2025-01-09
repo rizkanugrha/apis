@@ -1,6 +1,6 @@
 const createError = require('http-errors');
 const mongoose = require('mongoose');
-const { BanjirModels } = require('../models/banjirModels');
+const { BanjirModels } = require('../Models/banjirModels');
 
 const getAllBanjir = async (req, res, next) => {
   try {
