@@ -30,6 +30,10 @@ const createNewBanjir = async (req, res, next) => {
 const findBanjirById = async (req, res, next) => {
   const id = req.params.id;
   try {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw createError(400, 'Invalid Banjir ID');
+    }
+
     const banjir = await BanjirModels.findById(id);
     if (!banjir) {
       throw createError(404, 'Banjir record does not exist.');
@@ -37,30 +41,38 @@ const findBanjirById = async (req, res, next) => {
     res.send(banjir);
   } catch (error) {
     console.error(error.message);
-    if (error instanceof mongoose.CastError) {
-      next(createError(400, 'Invalid Banjir id'));
-      return;
-    }
     next(error);
   }
 };
 
-export const updateBanjir = async (req, res) => {
+const updateBanjir = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const updatedBanjir = await Banjir.findByIdAndUpdate(id, req.body, {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw createError(400, 'Invalid Banjir ID');
+    }
+
+    const updatedBanjir = await BanjirModels.findByIdAndUpdate(id, req.body, {
       new: true,
+      runValidators: true,
     });
-    if (!updatedBanjir) return res.status(404).json({ message: "Data tidak ditemukan" });
+    if (!updatedBanjir) {
+      throw createError(404, 'Banjir record does not exist.');
+    }
     res.status(200).json(updatedBanjir);
   } catch (error) {
-    res.status(500).json({ message: "Gagal memperbarui data", error });
+    console.error(error.message);
+    next(error);
   }
 };
 
 const deleteBanjir = async (req, res, next) => {
   const id = req.params.id;
   try {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw createError(400, 'Invalid Banjir ID');
+    }
+
     const result = await BanjirModels.findByIdAndDelete(id);
     if (!result) {
       throw createError(404, 'Banjir record does not exist.');
@@ -68,10 +80,6 @@ const deleteBanjir = async (req, res, next) => {
     res.send(result);
   } catch (error) {
     console.error(error.message);
-    if (error instanceof mongoose.CastError) {
-      next(createError(400, 'Invalid Banjir id'));
-      return;
-    }
     next(error);
   }
 };

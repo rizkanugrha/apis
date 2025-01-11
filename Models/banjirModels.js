@@ -4,7 +4,7 @@ const banjirSchema = new mongoose.Schema(
   {
     bencana: {
       type: String,
-      default: "Banjir", // Nilai default
+      default: "Banjir",
     },
     waktu: {
       type: Date,
