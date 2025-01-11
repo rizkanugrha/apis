@@ -1,6 +1,6 @@
-const express = require('express');
-const createError = require('http-errors');
-const dotenv = require('dotenv').config();
+const express = require("express");
+const createError = require("http-errors");
+const dotenv = require("dotenv").config();
 
 const app = express();
 
@@ -8,36 +8,33 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Initialize DB
-require('./initDB')();
+require("./initDB")();
 
 // Welcome message route
-const dek = 'halo dek welkam geni bencana banjir Kabupaten Batang';
-app.get('/', (req, res) => {
-  res.send(dek);
+app.get("/", (req, res) => {
+  res.send("API Bencana Banjir Kabupaten Batang");
 });
 
-// Import and use banjirRoutes
-const banjirRoute = require('./Routes/banjirRoutes');
-app.use('/geni', banjirRoute);
+// Import and use routes
+const banjirRoute = require("./Routes/banjirRoutes");
+app.use("/geni", banjirRoute);
 
-// 404 handler - Pass to error handler
+// 404 handler
 app.use((req, res, next) => {
-  next(createError(404, 'Not found'));
+  next(createError(404, "Route not found"));
 });
 
 // Error handler
 app.use((err, req, res, next) => {
-  res.status(err.status || 500);
-  res.send({
+  res.status(err.status || 500).json({
     error: {
       status: err.status || 500,
-      message: err.message,
+      message: err.message || "Internal Server Error",
     },
   });
 });
 
 const PORT = process.env.PORT || 3000;
-
 app.listen(PORT, () => {
-  console.log(`Server started on port ${PORT}...`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });
