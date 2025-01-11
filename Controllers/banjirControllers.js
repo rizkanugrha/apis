@@ -1,46 +1,80 @@
-const createError = require("http-errors");
-const { BanjirModels } = require("../Models/banjirModels");
-const asyncHandler = require("express-async-handler");
+const createError = require('http-errors');
+const mongoose = require('mongoose');
+const { BanjirModels } = require('../Models/banjirModels');
 
-// Get All Records
-const getAllBanjir = asyncHandler(async (req, res) => {
-  const results = await BanjirModels.find({}, { __v: 0 });
-  res.status(200).json(results);
-});
+const getAllBanjir = async (req, res, next) => {
+  try {
+    const results = await BanjirModels.find({}, { __v: 0 });
+    res.send(results);
+  } catch (error) {
+    console.error(error.message);
+    next(error);
+  }
+};
 
-// Create New Record
-const createNewBanjir = asyncHandler(async (req, res) => {
-  const banjir = new BanjirModels(req.body);
-  const result = await banjir.save();
-  res.status(201).json(result);
-});
+const createNewBanjir = async (req, res, next) => {
+  try {
+    const banjir = new BanjirModels(req.body);
+    const result = await banjir.save();
+    res.send(result);
+  } catch (error) {
+    console.error(error.message);
+    if (error.name === 'ValidationError') {
+      next(createError(422, error.message));
+      return;
+    }
+    next(error);
+  }
+};
 
-// Find Record By ID
-const findBanjirById = asyncHandler(async (req, res) => {
+const findBanjirById = async (req, res, next) => {
   const id = req.params.id;
-  const banjir = await BanjirModels.findById(id);
-  if (!banjir) throw createError(404, "Banjir record does not exist.");
-  res.status(200).json(banjir);
-});
+  try {
+    const banjir = await BanjirModels.findById(id);
+    if (!banjir) {
+      throw createError(404, 'Banjir record does not exist.');
+    }
+    res.send(banjir);
+  } catch (error) {
+    console.error(error.message);
+    if (error instanceof mongoose.CastError) {
+      next(createError(400, 'Invalid Banjir id'));
+      return;
+    }
+    next(error);
+  }
+};
 
-// Update Record By ID
-const updateBanjir = asyncHandler(async (req, res) => {
-  const { id } = req.params;
-  const updatedBanjir = await BanjirModels.findByIdAndUpdate(id, req.body, {
-    new: true, // Return updated document
-    runValidators: true, // Ensure validation runs on update
-  });
-  if (!updatedBanjir) throw createError(404, "Data tidak ditemukan.");
-  res.status(200).json(updatedBanjir);
-});
+export const updateBanjir = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updatedBanjir = await Banjir.findByIdAndUpdate(id, req.body, {
+      new: true,
+    });
+    if (!updatedBanjir) return res.status(404).json({ message: "Data tidak ditemukan" });
+    res.status(200).json(updatedBanjir);
+  } catch (error) {
+    res.status(500).json({ message: "Gagal memperbarui data", error });
+  }
+};
 
-// Delete Record By ID
-const deleteBanjir = asyncHandler(async (req, res) => {
+const deleteBanjir = async (req, res, next) => {
   const id = req.params.id;
-  const result = await BanjirModels.findByIdAndDelete(id);
-  if (!result) throw createError(404, "Banjir record does not exist.");
-  res.status(200).json({ message: "Data berhasil dihapus", result });
-});
+  try {
+    const result = await BanjirModels.findByIdAndDelete(id);
+    if (!result) {
+      throw createError(404, 'Banjir record does not exist.');
+    }
+    res.send(result);
+  } catch (error) {
+    console.error(error.message);
+    if (error instanceof mongoose.CastError) {
+      next(createError(400, 'Invalid Banjir id'));
+      return;
+    }
+    next(error);
+  }
+};
 
 module.exports = {
   getAllBanjir,
