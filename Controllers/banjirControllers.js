@@ -45,24 +45,16 @@ const findBanjirById = async (req, res, next) => {
   }
 };
 
-const updateBanjir = async (req, res, next) => {
+export const updateBanjir = async (req, res) => {
   try {
-    const id = req.params.id;
-    const updates = req.body;
-    const options = { new: true };
-
-    const result = await BanjirModels.findByIdAndUpdate(id, updates, options);
-    if (!result) {
-      throw createError(404, 'Banjir record does not exist');
-    }
-    res.send(result);
+    const { id } = req.params;
+    const updatedBanjir = await Banjir.findByIdAndUpdate(id, req.body, {
+      new: true,
+    });
+    if (!updatedBanjir) return res.status(404).json({ message: "Data tidak ditemukan" });
+    res.status(200).json(updatedBanjir);
   } catch (error) {
-    console.error(error.message);
-    if (error instanceof mongoose.CastError) {
-      next(createError(400, 'Invalid Banjir Id'));
-    } else {
-      next(error);
-    }
+    res.status(500).json({ message: "Gagal memperbarui data", error });
   }
 };
 
