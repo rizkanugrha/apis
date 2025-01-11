@@ -2,10 +2,6 @@ const mongoose = require('mongoose');
 
 const banjirSchema = new mongoose.Schema(
   {
-    no: {
-      type: Number,
-      required: true,
-    },
     bencana: {
       type: String,
       required: true,
