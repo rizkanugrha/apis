@@ -6,13 +6,24 @@ const app = express();
 
 app.use(cors());
 
-// Atau gunakan konfigurasi spesifik
-app.use(cors({
-  origin: ["https://geni.tugas-cool.my.id/geni/", "http://localhost:3000", "http://localhost:5173"], // Izinkan domain frontend Anda
-  methods: ["GET", "POST", "PATCH", "DELETE"], // Metode HTTP yang diizinkan
-  allowedHeaders: ["Content-Type"], // Header yang diizinkan
-}));
 
+// Middleware CORS
+app.use(
+  cors({
+    origin: ["https://geni.tugas-cool.my.id/geni/", "http://localhost:3000", "http://localhost:5173"], // Izinkan domain frontend Anda
+    credentials: true, // Izinkan pengiriman token CSRF
+    methods: ["GET", "POST", "PATCH", "DELETE"], // Metode HTTP yang diizinkan
+    allowedHeaders: ["Content-Type", "Authorization"], // Header yang diizinkan
+  })
+);
+
+// Middleware untuk menangani preflight request
+app.options("*", (req, res) => {
+  res.header("Access-Control-Allow-Origin", "http://localhost:5173");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.send();
+});
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
