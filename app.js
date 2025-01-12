@@ -1,8 +1,18 @@
 const express = require("express");
 const createError = require("http-errors");
 const dotenv = require("dotenv").config();
-
+const cors = require("cors");
 const app = express();
+
+app.use(cors());
+
+// Atau gunakan konfigurasi spesifik
+app.use(cors({
+  origin: ["https://geni.tugas-cool.my.id/geni/", "http://localhost:3000", "http://localhost:5173"], // Izinkan domain frontend Anda
+  methods: ["GET", "POST", "PATCH", "DELETE"], // Metode HTTP yang diizinkan
+  allowedHeaders: ["Content-Type"], // Header yang diizinkan
+}));
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
